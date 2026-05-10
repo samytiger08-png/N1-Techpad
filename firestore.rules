@@ -1,0 +1,63 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // 0. Global Safety Net
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // --- Helpers ---
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isEmailVerified() {
+      return isSignedIn() && request.auth.token.email_verified == true;
+    }
+
+    function isAdmin() {
+      return isSignedIn();
+    }
+
+    function isValidId(id) {
+      return id is string && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    function incoming() {
+      return request.resource.data;
+    }
+
+    function existing() {
+      return resource.data;
+    }
+
+    // --- Orders Collection ---
+    match /orders/{orderId} {
+      // 1. Validation Blueprint
+      function isValidOrder(data) {
+        return data.productName == "Wireless Charging RGB Mousepad"
+          && data.productPrice == 3900
+          && data.productsTotal == 3900
+          && data.deliveryType in ['stopDeskEcommerce', 'domicileEcommerce']
+          && data.deliveryFee is number && data.deliveryFee >= 0
+          && data.finalTotal == 3900 + data.deliveryFee
+          && data.customerName is string && data.customerName.size() > 0 && data.customerName.size() <= 100
+          && data.phone is string && data.phone.size() >= 10 && data.phone.size() <= 15
+          && data.wilaya is string && data.wilaya.size() > 0
+          && data.wilayaCode is number
+          && data.commune is string && data.commune.size() > 0
+          && data.language in ['ar', 'fr']
+          && data.status == 'new'
+          && data.createdAt is timestamp;
+      }
+
+      // Allow anyone to create an order if it matches the schema
+      allow create: if isValidOrder(incoming()) 
+          && incoming().keys().hasAll(['productName', 'productPrice', 'productsTotal', 'deliveryType', 'deliveryLabelAr', 'deliveryLabelFr', 'deliveryFee', 'finalTotal', 'customerName', 'phone', 'wilaya', 'wilayaCode', 'commune', 'language', 'status', 'createdAt'])
+          && incoming().keys().size() == 16;
+
+      // Only Admin can read/list/update/delete
+      allow read, list, update, delete: if isAdmin();
+    }
+  }
+}

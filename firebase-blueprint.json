@@ -1,0 +1,48 @@
+{
+  "entities": {
+    "Order": {
+      "title": "Order",
+      "description": "A customer order for the product",
+      "type": "object",
+      "properties": {
+        "productName": { "type": "string" },
+        "productPrice": { "type": "number" },
+        "productsTotal": { "type": "number" },
+        "deliveryType": { "type": "string", "enum": ["stopDeskEcommerce", "domicileEcommerce"] },
+        "deliveryLabelAr": { "type": "string" },
+        "deliveryLabelFr": { "type": "string" },
+        "deliveryFee": { "type": "number" },
+        "finalTotal": { "type": "number" },
+        "customerName": { "type": "string" },
+        "phone": { "type": "string" },
+        "wilaya": { "type": "string" },
+        "wilayaCode": { "type": "number" },
+        "commune": { "type": "string" },
+        "language": { "type": "string", "enum": ["ar", "fr"] },
+        "status": { "type": "string", "enum": ["new", "processing", "shipped", "delivered", "cancelled"] },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": [
+        "productName",
+        "productPrice",
+        "productsTotal",
+        "deliveryType",
+        "deliveryFee",
+        "finalTotal",
+        "customerName",
+        "phone",
+        "wilaya",
+        "wilayaCode",
+        "commune",
+        "language",
+        "status"
+      ]
+    }
+  },
+  "firestore": {
+    "orders/{orderId}": {
+      "schema": "Order",
+      "description": "Collection of customer orders"
+    }
+  }
+}
