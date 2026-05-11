@@ -7,7 +7,16 @@ import { DeliveryType, Order } from '../types';
 import { Pixel } from '../lib/pixel';
 import { cn } from '../lib/utils';
 import { motion } from 'motion/react';
-import { Phone, User, MapPin, Truck, Box, CheckCircle2 } from 'lucide-react';
+import { Phone, User, MapPin, Truck, Box, CheckCircle2, ChevronDown } from 'lucide-react';
+import citiesData from '../data/algeria_cities.json';
+
+const cities = citiesData as any[];
+
+// Get unique wilayas from JSON
+const wilayas = Array.from(
+  new Map(cities.map((c) => [String(Number(c.wilaya_code)), c.wilaya_name])).entries()
+).map(([code, name]) => ({ code: Number(code), name }))
+.sort((a, b) => a.code - b.code);
 
 export const OrderForm: React.FC = () => {
   const { t, language } = useLanguage();
@@ -26,6 +35,12 @@ export const OrderForm: React.FC = () => {
   const [deliveryFee, setDeliveryFee] = useState(0);
   const productPrice = 3900;
 
+  // Filter communes based on selected wilaya
+  const filteredCommunes = cities
+    .filter((c) => Number(c.wilaya_code) === Number(formData.wilayaCode))
+    .map((c) => c.commune_name)
+    .sort((a, b) => a.localeCompare(b));
+
   const selectedWilaya = deliveryData.find(d => d.code === Number(formData.wilayaCode));
 
   useEffect(() => {
@@ -36,6 +51,16 @@ export const OrderForm: React.FC = () => {
       setDeliveryFee(0);
     }
   }, [formData.wilayaCode, formData.deliveryType, selectedWilaya]);
+
+  // Reset commune and delivery type when wilaya changes
+  const handleWilayaChange = (code: string) => {
+    setFormData({
+      ...formData,
+      wilayaCode: code,
+      commune: '',
+      deliveryType: ''
+    });
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -167,15 +192,16 @@ export const OrderForm: React.FC = () => {
                 </label>
                 <div className="relative">
                   <select
-                    className="w-full px-5 py-3.5 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-black transition-all outline-none text-sm appearance-none font-medium"
+                    className="w-full px-5 py-3.5 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-black transition-all outline-none text-sm appearance-none font-medium pr-10"
                     value={formData.wilayaCode}
-                    onChange={(e) => setFormData({ ...formData, wilayaCode: e.target.value, deliveryType: '' })}
+                    onChange={(e) => handleWilayaChange(e.target.value)}
                   >
                     <option value="">{t('selectWilaya')}</option>
-                    {deliveryData.map((d) => (
-                      <option key={d.code} value={d.code}>{d.code} - {d.wilaya}</option>
+                    {wilayas.map((w) => (
+                      <option key={w.code} value={w.code}>{w.code} - {w.name}</option>
                     ))}
                   </select>
+                  <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" size={16} />
                 </div>
               </div>
 
@@ -184,14 +210,20 @@ export const OrderForm: React.FC = () => {
                   <Box size={14} />
                   {t('commune')}
                 </label>
-                <input
-                  type="text"
-                  placeholder={t('placeHolderCommune')}
-                  className="w-full px-5 py-3.5 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-black transition-all outline-none text-sm font-medium"
-                  value={formData.commune}
-                  onChange={(e) => setFormData({ ...formData, commune: e.target.value })}
-                  disabled={!formData.wilayaCode}
-                />
+                <div className="relative">
+                  <select
+                    className="w-full px-5 py-3.5 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-black transition-all outline-none text-sm appearance-none font-medium pr-10 disabled:opacity-50"
+                    value={formData.commune}
+                    onChange={(e) => setFormData({ ...formData, commune: e.target.value })}
+                    disabled={!formData.wilayaCode}
+                  >
+                    <option value="">{t('selectCommune')}</option>
+                    {filteredCommunes.map((c, i) => (
+                      <option key={`${c}-${i}`} value={c}>{c}</option>
+                    ))}
+                  </select>
+                  <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" size={16} />
+                </div>
               </div>
             </div>
 

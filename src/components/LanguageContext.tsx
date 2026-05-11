@@ -44,6 +44,7 @@ const translations: Record<Language, Record<string, string>> = {
     placeHolderPhone: "أدخل رقم هاتفك",
     placeHolderCommune: "أدخل اسم البلدية",
     selectWilaya: "اختر الولاية",
+    selectCommune: "اختر البلدية",
     orderNow: "اطلب الآن"
   },
   fr: {
@@ -81,6 +82,7 @@ const translations: Record<Language, Record<string, string>> = {
     placeHolderPhone: "Entrez votre numéro de téléphone",
     placeHolderCommune: "Entrez le nom de la commune",
     selectWilaya: "Choisir la wilaya",
+    selectCommune: "Choisir la commune",
     orderNow: "Commander maintenant"
   }
 };
