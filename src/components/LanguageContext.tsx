@@ -12,7 +12,7 @@ const translations: Record<Language, Record<string, string>> = {
   ar: {
     productName: "Wireless Charging RGB Mousepad",
     heroHook: "ماوس باد RGB كبير مع شاحن لاسلكي 10W",
-    price: "3900 دج",
+    price: "8900 دج",
     cta: "اطلب الآن",
     features: "المميزات",
     feature1: "شحن لاسلكي 10W",
@@ -45,12 +45,13 @@ const translations: Record<Language, Record<string, string>> = {
     placeHolderCommune: "أدخل اسم البلدية",
     selectWilaya: "اختر الولاية",
     selectCommune: "اختر البلدية",
-    orderNow: "اطلب الآن"
+    orderNow: "اطلب الآن",
+    promoBanner: "🚚 التوصيل مجاني، اطلب الآن! ⚡"
   },
   fr: {
     productName: "Wireless Charging RGB Mousepad",
     heroHook: "Mousepad RGB grand format avec chargeur sans fil 10W",
-    price: "3900 DA",
+    price: "8900 DA",
     cta: "Commander maintenant",
     features: "Caractéristiques",
     feature1: "Charge sans fil 10W",
@@ -83,7 +84,8 @@ const translations: Record<Language, Record<string, string>> = {
     placeHolderCommune: "Entrez le nom de la commune",
     selectWilaya: "Choisir la wilaya",
     selectCommune: "Choisir la commune",
-    orderNow: "Commander maintenant"
+    orderNow: "Commander maintenant",
+    promoBanner: "🚚 Livraison Gratuite, Commandez Maintenant ! ⚡"
   }
 };
 

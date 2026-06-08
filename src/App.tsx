@@ -29,7 +29,7 @@ const LandingPage: React.FC = () => {
 
   useEffect(() => {
     Pixel.viewContent({
-      value: 3900,
+      value: 8900,
       currency: "DZD",
       content_name: "Wireless Charging RGB Mousepad",
       content_type: "product"
@@ -45,14 +45,9 @@ const LandingPage: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-app-bg text-white font-sans p-4 select-none">
-      {/* Top Bar / Lang Switcher */}
-      <header className="flex justify-between items-center mb-6 px-2 max-w-7xl mx-auto w-full">
-        <div className="flex items-center gap-2 group cursor-pointer">
-          <div className="w-8 h-8 bg-gradient-to-tr from-cyan-400 to-red-500 rounded-lg shadow-lg shadow-red-500/20 group-hover:rotate-12 transition-transform"></div>
-          <span className="font-bold text-lg tracking-tight uppercase italic">TECH<span className="text-red-500">PAD</span></span>
-        </div>
-        
-        <div className="flex bg-[#1a1a1c] rounded-full p-1 border border-white/10">
+      {/* Top Bar / Lang Switcher & Promo Banner */}
+      <header dir="ltr" className="grid grid-cols-3 items-center mb-6 px-2 max-w-7xl mx-auto w-full">
+        <div className="justify-self-start flex bg-[#1a1a1c] rounded-full p-1 border border-white/10">
           <button 
             onClick={() => setLanguage('ar')}
             className={cn(
@@ -71,6 +66,17 @@ const LandingPage: React.FC = () => {
           >
             FR
           </button>
+        </div>
+
+        <div className="justify-self-center flex items-center">
+          <div className="w-[315.885px] bg-[#EF4444] text-white font-extrabold text-[18px] leading-[19px] py-3 rounded-full shadow-xl shadow-red-500/30 tracking-wide select-none text-center transform hover:scale-105 transition-transform duration-200">
+            {t('promoBanner')}
+          </div>
+        </div>
+
+        <div className="justify-self-end flex items-center gap-2 group cursor-pointer">
+          <div className="w-8 h-8 bg-gradient-to-tr from-cyan-400 to-red-500 rounded-lg shadow-lg shadow-red-500/20 group-hover:rotate-12 transition-transform"></div>
+          <span className="font-bold text-lg tracking-tight uppercase italic">TECH<span className="text-red-500">PAD</span></span>
         </div>
       </header>
 
@@ -111,7 +117,7 @@ const LandingPage: React.FC = () => {
             </p>
             <div className="flex items-baseline gap-3">
               <span className="text-4xl font-black text-red-500 font-mono tracking-tighter italic">{t('price')}</span>
-              <span className="text-gray-600 line-through text-sm font-medium">5900 DA</span>
+              <span className="text-gray-600 line-through text-sm font-medium">12900 DA</span>
             </div>
           </div>
 

@@ -33,7 +33,7 @@ export const OrderForm: React.FC = () => {
   });
 
   const [deliveryFee, setDeliveryFee] = useState(0);
-  const productPrice = 3900;
+  const productPrice = 8900;
 
   // Filter communes based on selected wilaya
   const filteredCommunes = cities

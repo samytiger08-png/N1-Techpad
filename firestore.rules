@@ -36,11 +36,11 @@ service cloud.firestore {
       // 1. Validation Blueprint
       function isValidOrder(data) {
         return data.productName == "Wireless Charging RGB Mousepad"
-          && data.productPrice == 3900
-          && data.productsTotal == 3900
+          && data.productPrice == 8900
+          && data.productsTotal == 8900
           && data.deliveryType in ['stopDeskEcommerce', 'domicileEcommerce']
           && data.deliveryFee is number && data.deliveryFee >= 0
-          && data.finalTotal == 3900 + data.deliveryFee
+          && data.finalTotal == 8900 + data.deliveryFee
           && data.customerName is string && data.customerName.size() > 0 && data.customerName.size() <= 100
           && data.phone is string && data.phone.size() >= 10 && data.phone.size() <= 15
           && data.wilaya is string && data.wilaya.size() > 0
