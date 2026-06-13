@@ -13,6 +13,7 @@ export const StoreHome: React.FC = () => {
   useEffect(() => {
     // Page views on the main store are tracked on Meta pixel
     Pixel.pageView();
+    document.title = "N1 Techpad | Store";
   }, []);
 
   return (

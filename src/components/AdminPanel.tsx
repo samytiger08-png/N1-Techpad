@@ -54,6 +54,10 @@ export const AdminPanel: React.FC = () => {
   const [needsSetup, setNeedsSetup] = useState(false);
 
   useEffect(() => {
+    document.title = "Admin Panel - Techpad";
+  }, []);
+
+  useEffect(() => {
     if (isAuthorized) {
       const initAdmin = async () => {
         try {
