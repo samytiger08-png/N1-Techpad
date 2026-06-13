@@ -7,8 +7,9 @@ import { DeliveryType, Order } from '../types';
 import { Pixel } from '../lib/pixel';
 import { cn } from '../lib/utils';
 import { motion } from 'motion/react';
-import { Phone, User, MapPin, Truck, Box, CheckCircle2, ChevronDown } from 'lucide-react';
+import { Phone, User, MapPin, Truck, Box, CheckCircle2, ChevronDown, Palette } from 'lucide-react';
 import citiesData from '../data/algeria_cities.json';
+import { Product } from '../data/products';
 
 const cities = citiesData as any[];
 
@@ -18,7 +19,11 @@ const wilayas = Array.from(
 ).map(([code, name]) => ({ code: Number(code), name }))
 .sort((a, b) => a.code - b.code);
 
-export const OrderForm: React.FC = () => {
+interface OrderFormProps {
+  product: Product;
+}
+
+export const OrderForm: React.FC<OrderFormProps> = ({ product }) => {
   const { t, language } = useLanguage();
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
@@ -30,10 +35,10 @@ export const OrderForm: React.FC = () => {
     wilayaCode: '',
     commune: '',
     deliveryType: '' as DeliveryType | '',
+    color: '' as 'Noir' | 'Blanc' | '',
   });
 
   const [deliveryFee, setDeliveryFee] = useState(0);
-  const productPrice = 8900;
 
   // Filter communes based on selected wilaya
   const filteredCommunes = cities
@@ -58,8 +63,20 @@ export const OrderForm: React.FC = () => {
       ...formData,
       wilayaCode: code,
       commune: '',
-      deliveryType: ''
+      deliveryType: '',
     });
+  };
+
+  const handleDeliverySelect = (type: DeliveryType) => {
+    if (selectedWilaya) {
+      const fee = selectedWilaya[type];
+      if (fee === null) {
+        setError(t('errorNotAvailable'));
+        return;
+      }
+    }
+    setFormData(prev => ({ ...prev, deliveryType: type }));
+    setError(null);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -71,9 +88,14 @@ export const OrderForm: React.FC = () => {
       return;
     }
 
+    if (product.hasColorChoice && !formData.color) {
+      setError(language === 'ar' ? "يرجى اختيار لون لوحة المفاتيح" : "Veuillez choisir la couleur du clavier");
+      return;
+    }
+
     if (!selectedWilaya) return;
 
-    const fee = selectedWilaya[formData.deliveryType];
+    const fee = selectedWilaya[formData.deliveryType as DeliveryType];
     if (fee === null) {
       setError(t('errorNotAvailable'));
       return;
@@ -83,14 +105,14 @@ export const OrderForm: React.FC = () => {
 
     try {
       const orderData: Order = {
-        productName: "Wireless Charging RGB Mousepad",
-        productPrice: productPrice,
-        productsTotal: productPrice,
+        productName: product.name.fr,
+        productPrice: product.price,
+        productsTotal: product.price,
         deliveryType: formData.deliveryType as DeliveryType,
         deliveryLabelAr: formData.deliveryType === 'stopDeskEcommerce' ? "استلام من المكتب" : "التوصيل إلى المنزل",
         deliveryLabelFr: formData.deliveryType === 'stopDeskEcommerce' ? "Livraison au bureau" : "Livraison à domicile",
         deliveryFee: fee,
-        finalTotal: productPrice + fee,
+        finalTotal: product.price + fee,
         customerName: formData.fullName,
         phone: formData.phone,
         wilaya: selectedWilaya.wilaya,
@@ -99,6 +121,7 @@ export const OrderForm: React.FC = () => {
         language,
         status: 'new',
         createdAt: serverTimestamp(),
+        color: product.hasColorChoice ? formData.color : undefined,
       };
 
       await addDoc(collection(db, 'orders'), orderData);
@@ -150,7 +173,7 @@ export const OrderForm: React.FC = () => {
               <h2 className="text-xl font-bold uppercase tracking-tight">{t('orderFormTitle')}</h2>
            </div>
            <div className="hidden md:block text-[10px] font-black text-gray-400 tracking-widest uppercase">
-              Mousepad RGB • 10W
+              {product.name.fr}
            </div>
         </div>
 
@@ -227,6 +250,41 @@ export const OrderForm: React.FC = () => {
               </div>
             </div>
 
+            {product.hasColorChoice && (
+              <div className="space-y-1.5">
+                <label className="text-[11px] font-bold text-gray-400 uppercase tracking-widest flex items-center gap-2">
+                  <Palette size={14} />
+                  {t('color')}
+                </label>
+                <div className="grid grid-cols-2 gap-3">
+                  <button
+                    type="button"
+                    onClick={() => setFormData({ ...formData, color: 'Noir' })}
+                    className={cn(
+                      "px-5 py-3.5 rounded-2xl border-2 text-xs font-bold uppercase transition-all cursor-pointer text-center",
+                      formData.color === 'Noir'
+                        ? "border-black bg-black text-white" 
+                        : "border-gray-100 bg-gray-50 text-gray-900 hover:border-gray-200"
+                    )}
+                  >
+                    {t('colorNoir')}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setFormData({ ...formData, color: 'Blanc' })}
+                    className={cn(
+                      "px-5 py-3.5 rounded-2xl border-2 text-xs font-bold uppercase transition-all cursor-pointer text-center",
+                      formData.color === 'Blanc'
+                        ? "border-black bg-black text-white" 
+                        : "border-gray-100 bg-gray-50 text-gray-900 hover:border-gray-200"
+                    )}
+                  >
+                    {t('colorBlanc')}
+                  </button>
+                </div>
+              </div>
+            )}
+
             {formData.wilayaCode && (
               <div className="space-y-3">
                 <label className="text-[11px] font-bold text-gray-400 uppercase tracking-widest flex items-center gap-2">
@@ -236,14 +294,14 @@ export const OrderForm: React.FC = () => {
                 <div className="grid grid-cols-2 gap-3">
                   <button
                     type="button"
-                    onClick={() => setFormData({ ...formData, deliveryType: 'domicileEcommerce' })}
+                    onClick={() => handleDeliverySelect('domicileEcommerce')}
                     disabled={selectedWilaya?.domicileEcommerce === null}
                     className={cn(
-                      "flex flex-col items-center justify-center p-3 rounded-2xl border-2 transition-all",
+                      "flex flex-col items-center justify-center p-3 rounded-2xl border-2 transition-all cursor-pointer w-full",
                       formData.deliveryType === 'domicileEcommerce' 
                         ? "border-black bg-black text-white" 
                         : "border-gray-100 bg-gray-50 hover:border-gray-200 text-gray-900",
-                      selectedWilaya?.domicileEcommerce === null && "opacity-40 cursor-not-allowed"
+                      selectedWilaya?.domicileEcommerce === null && "opacity-45 cursor-not-allowed"
                     )}
                   >
                     <span className="text-xs font-bold leading-tight mb-1">{t('domicile')}</span>
@@ -258,14 +316,14 @@ export const OrderForm: React.FC = () => {
 
                   <button
                     type="button"
-                    onClick={() => setFormData({ ...formData, deliveryType: 'stopDeskEcommerce' })}
+                    onClick={() => handleDeliverySelect('stopDeskEcommerce')}
                     disabled={selectedWilaya?.stopDeskEcommerce === null}
                     className={cn(
-                      "flex flex-col items-center justify-center p-3 rounded-2xl border-2 transition-all",
+                      "flex flex-col items-center justify-center p-3 rounded-2xl border-2 transition-all cursor-pointer w-full",
                       formData.deliveryType === 'stopDeskEcommerce' 
                         ? "border-black bg-black text-white" 
                         : "border-gray-100 bg-gray-50 hover:border-gray-200 text-gray-900",
-                      selectedWilaya?.stopDeskEcommerce === null && "opacity-40 cursor-not-allowed"
+                      selectedWilaya?.stopDeskEcommerce === null && "opacity-45 cursor-not-allowed"
                     )}
                   >
                     <span className="text-xs font-bold leading-tight mb-1">{t('stopDesk')}</span>
@@ -288,21 +346,35 @@ export const OrderForm: React.FC = () => {
             )}
           </div>
 
-          <div className="pt-6 border-t border-gray-100 mt-auto">
-            <div className="flex justify-between items-baseline mb-4">
-              <span className="text-gray-400 text-sm font-bold uppercase tracking-widest">{t('total')}</span>
+          <div className="space-y-3 pt-4 border-t border-gray-100 mt-auto">
+            <div className="space-y-1.5">
+              <div className="flex justify-between items-center text-[11px]">
+                <span className="text-gray-400 font-bold uppercase tracking-widest">{t('priceProductLabel')}</span>
+                <span className="font-bold font-mono text-gray-900">{product.price} DA</span>
+              </div>
+              
+              <div className="flex justify-between items-center text-[11px]">
+                <span className="text-gray-400 font-bold uppercase tracking-widest">{t('deliveryFee')}</span>
+                <span className={cn("font-bold text-gray-900", !formData.deliveryType && "text-red-500 italic text-[10px]")}>
+                  {formData.deliveryType ? `${deliveryFee} DA` : t('selectDeliveryPrompt')}
+                </span>
+              </div>
+            </div>
+
+            <div className="flex justify-between items-baseline pt-3 border-t border-gray-100">
+              <span className="text-gray-400 text-xs font-bold uppercase tracking-widest">{t('total')}</span>
               <div className="flex flex-col items-end">
-                 <span className="text-3xl font-black text-red-600 font-mono tracking-tighter italic">
-                   {productPrice + deliveryFee} DA
-                 </span>
-                 <span className="text-[10px] text-gray-400 font-medium">Prix final avec livraison</span>
+                <span className="text-2xl font-black text-red-600 font-mono tracking-tighter italic">
+                  {formData.deliveryType ? `${product.price + deliveryFee} DA` : '—'}
+                </span>
+                <span className="text-[9px] text-gray-400 font-medium">{t('priceFinalWithDelivery')}</span>
               </div>
             </div>
 
             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-red-500 hover:bg-red-600 active:scale-[0.97] text-white font-black py-5 rounded-2xl shadow-xl shadow-red-500/20 transition-all flex items-center justify-center gap-3 disabled:opacity-70 disabled:active:scale-100 uppercase tracking-tight text-lg"
+              className="w-full bg-red-500 hover:bg-red-600 active:scale-[0.97] text-white font-black py-3.5 rounded-xl shadow-xl shadow-red-500/20 transition-all flex items-center justify-center gap-3 disabled:opacity-70 disabled:active:scale-100 uppercase tracking-tight text-base cursor-pointer"
             >
               {loading ? (
                 <div className="w-6 h-6 border-4 border-white border-t-transparent rounded-full animate-spin" />

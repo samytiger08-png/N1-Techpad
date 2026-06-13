@@ -23,6 +23,7 @@ export interface Order {
   wilayaCode: number;
   commune: string;
   language: 'ar' | 'fr';
-  status: 'new' | 'processing' | 'shipped' | 'delivered' | 'cancelled';
+  status: 'new' | 'processing' | 'shipped' | 'delivered' | 'cancelled' | 'ECHEC_01';
   createdAt: any; // Firestore Timestamp
+  color?: string;
 }

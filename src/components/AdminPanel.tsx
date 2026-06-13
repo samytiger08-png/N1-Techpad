@@ -7,7 +7,7 @@ import { Order } from '../types';
 import { cn } from '../lib/utils';
 import { LogOut, Package, Clock, CheckCircle, XCircle, Search, MapPin, Phone, Trash2, ShieldCheck, KeyRound, AlertTriangle } from 'lucide-react';
 
-const ADMIN_PASSWORD = "samyadminavecsaid2026";
+const ADMIN_PASSWORD = "saidsamy";
 
 enum OperationType {
   CREATE = 'create',
@@ -303,8 +303,18 @@ export const AdminPanel: React.FC = () => {
                   <tr key={order.id} className="hover:bg-gray-50/50 transition-colors">
                     <td className="px-6 py-4">
                       <div className="font-bold text-gray-900">{order.customerName}</div>
-                      <div className="text-sm text-gray-500 flex items-center gap-1 mt-0.5">
-                        <Phone size={12} />
+                      <div className="text-xs font-semibold text-cyan-600 mt-1 flex items-center gap-1.5 flex-wrap">
+                        <span className="bg-cyan-50 border border-cyan-100 px-1.5 py-0.5 rounded text-cyan-700">
+                          {order.productName || "Mousepad"}
+                        </span>
+                        {order.color && (
+                          <span className="bg-gray-100 border px-1.5 py-0.5 rounded text-gray-700">
+                            {order.color}
+                          </span>
+                        )}
+                      </div>
+                      <div className="text-xs text-gray-500 flex items-center gap-1 mt-1.5">
+                        <Phone size={12} className="text-gray-400" />
                         {order.phone}
                       </div>
                     </td>
@@ -338,13 +348,15 @@ export const AdminPanel: React.FC = () => {
                           order.status === 'shipped' && "bg-amber-100 text-amber-700 focus:ring-amber-500",
                           order.status === 'delivered' && "bg-green-100 text-green-700 focus:ring-green-500",
                           order.status === 'cancelled' && "bg-gray-100 text-gray-700 focus:ring-gray-500",
+                          order.status === 'ECHEC_01' && "bg-rose-100 text-rose-700 focus:ring-rose-500",
                         )}
                       >
-                        <option value="new">NEW</option>
-                        <option value="processing">PROCESSING</option>
-                        <option value="shipped">SHIPPED</option>
-                        <option value="delivered">DELIVERED</option>
-                        <option value="cancelled">CANCELLED</option>
+                        <option value="new">Nouveau</option>
+                        <option value="processing">Confirmée</option>
+                        <option value="shipped">Expédiée</option>
+                        <option value="delivered">Livrée</option>
+                        <option value="cancelled">Annulée</option>
+                        <option value="ECHEC_01">Échec 01</option>
                       </select>
                     </td>
                     <td className="px-6 py-4 text-xs text-gray-400 font-mono">

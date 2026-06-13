@@ -12,7 +12,7 @@ const translations: Record<Language, Record<string, string>> = {
   ar: {
     productName: "Wireless Charging RGB Mousepad",
     heroHook: "ماوس باد RGB كبير مع شاحن لاسلكي 10W",
-    price: "8900 دج",
+    price: "7900 دج",
     cta: "اطلب الآن",
     features: "المميزات",
     feature1: "شحن لاسلكي 10W",
@@ -46,12 +46,27 @@ const translations: Record<Language, Record<string, string>> = {
     selectWilaya: "اختر الولاية",
     selectCommune: "اختر البلدية",
     orderNow: "اطلب الآن",
-    promoBanner: "🚚 التوصيل مجاني، اطلب الآن! ⚡"
+    promoBanner: "🚚 التوصيل مجاني، اطلب الآن! ⚡",
+    free: "مجاني",
+    // New store keys
+    storeTitle: "متجر Techpad للألعاب",
+    storeSubtitle: "إكسسوارات ألعاب وتقنية مختارة للتجهيز الخاص بك.",
+    deliveryAlgeria: "التوصيل متوفر في الجزائر",
+    viewProduct: "عرض المنتج",
+    order: "طلب المنتج",
+    color: "اللون",
+    selectColor: "اختر اللون",
+    colorNoir: "أسود",
+    colorBlanc: "أبيض",
+    selectDeliveryPrompt: "اختر نوع التوصيل لحساب المجموع",
+    priceProductLabel: "سعر المنتج",
+    priceFinalWithDelivery: "السعر النهائي مع التوصيل",
+    backToStore: " العودة للمتجر"
   },
   fr: {
     productName: "Wireless Charging RGB Mousepad",
     heroHook: "Mousepad RGB grand format avec chargeur sans fil 10W",
-    price: "8900 DA",
+    price: "7900 DA",
     cta: "Commander maintenant",
     features: "Caractéristiques",
     feature1: "Charge sans fil 10W",
@@ -85,14 +100,29 @@ const translations: Record<Language, Record<string, string>> = {
     selectWilaya: "Choisir la wilaya",
     selectCommune: "Choisir la commune",
     orderNow: "Commander maintenant",
-    promoBanner: "🚚 Livraison Gratuite, Commandez Maintenant ! ⚡"
+    promoBanner: "🚚 Livraison Gratuite, Commandez Maintenant ! ⚡",
+    free: "Gratuit",
+    // New store keys
+    storeTitle: "Techpad Gaming Store",
+    storeSubtitle: "Accessoires gaming et tech sélectionnés pour votre setup.",
+    deliveryAlgeria: "Livraison disponible en Algérie",
+    viewProduct: "Voir le produit",
+    order: "Commander",
+    color: "Couleur",
+    selectColor: "Sélectionner la couleur",
+    colorNoir: "Noir",
+    colorBlanc: "Blanc",
+    selectDeliveryPrompt: "Sélectionnez le type de livraison",
+    priceProductLabel: "Prix produit",
+    priceFinalWithDelivery: "Prix final avec livraison",
+    backToStore: "Retourner à la boutique"
   }
 };
 
 const LanguageContext = createContext<LanguageContextType | undefined>(undefined);
 
 export const LanguageProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-  const [language, setLanguage] = useState<Language>('ar');
+  const [language, setLanguage] = useState<Language>('fr');
 
   useEffect(() => {
     document.documentElement.dir = language === 'ar' ? 'rtl' : 'ltr';
