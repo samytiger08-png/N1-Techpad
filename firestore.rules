@@ -33,28 +33,8 @@ service cloud.firestore {
 
     // --- Orders Collection ---
     match /orders/{orderId} {
-      // 1. Validation Blueprint
-      function isValidOrder(data) {
-        return data.productName == "Wireless Charging RGB Mousepad"
-          && data.productPrice == 8900
-          && data.productsTotal == 8900
-          && data.deliveryType in ['stopDeskEcommerce', 'domicileEcommerce']
-          && data.deliveryFee is number && data.deliveryFee >= 0
-          && data.finalTotal == 8900 + data.deliveryFee
-          && data.customerName is string && data.customerName.size() > 0 && data.customerName.size() <= 100
-          && data.phone is string && data.phone.size() >= 10 && data.phone.size() <= 15
-          && data.wilaya is string && data.wilaya.size() > 0
-          && data.wilayaCode is number
-          && data.commune is string && data.commune.size() > 0
-          && data.language in ['ar', 'fr']
-          && data.status == 'new'
-          && data.createdAt is timestamp;
-      }
-
-      // Allow anyone to create an order if it matches the schema
-      allow create: if isValidOrder(incoming()) 
-          && incoming().keys().hasAll(['productName', 'productPrice', 'productsTotal', 'deliveryType', 'deliveryLabelAr', 'deliveryLabelFr', 'deliveryFee', 'finalTotal', 'customerName', 'phone', 'wilaya', 'wilayaCode', 'commune', 'language', 'status', 'createdAt'])
-          && incoming().keys().size() == 16;
+      // Allow public users to create new orders
+      allow create: if true;
 
       // Only Admin can read/list/update/delete
       allow read, list, update, delete: if isAdmin();

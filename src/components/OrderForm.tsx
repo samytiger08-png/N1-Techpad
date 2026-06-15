@@ -121,8 +121,20 @@ export const OrderForm: React.FC<OrderFormProps> = ({ product }) => {
         language,
         status: 'new',
         createdAt: serverTimestamp(),
-        color: product.hasColorChoice ? formData.color : undefined,
       };
+
+      if (product.slug === 'yilima-g502x-gaming-keyboard' && (formData.color === 'Noir' || formData.color === 'Blanc')) {
+        orderData.color = formData.color;
+      }
+
+      // Before calling addDoc, clean the order data and remove every key with value undefined
+      (Object.keys(orderData) as Array<keyof Order>).forEach((key) => {
+        if (orderData[key] === undefined) {
+          delete orderData[key];
+        }
+      });
+
+      console.log("Submitting orderData:", JSON.stringify(orderData, null, 2));
 
       await addDoc(collection(db, 'orders'), orderData);
       
